@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="data:image/gif;base64,R0lGODlhEAAQAOYAAP7+AOLiDQAAf4uLxf7+/v79AP//AAAAjXp6v/////7/AAAAc0BVuv5PAP5kAP5fAP5gAP5hAP99AMweBgALnf5XAP56AP5xAP5yAP5zAP5tAP53AP96AP9tAAAAlP7sAP7DAP6pAP7ZAP94AP+UAAAAcNDM7P7oAP5OAP4AAP7TAP5qAP+KAC1LTy4qrv7wAP6nAP5nAP97AJ6+JQAAg9PT6f7pAP5bAP7kAP9xAAAAgV5er/5TAP4ZAP5QAP9lAGNjPyQkkv6rAP7fAP7jAP71AP7lAP7rAP50AP5oACkpav5LAP5cAP5RAP5KAP5IAP5SAJKSNtHRFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFewAJACwAAAAAEAAQAAAHoIAAgoOEhYaHiImFCoyNjgqEBQoNFRUNlzwVSwoFg5IOFh8nLzY4QkycngoPFwooKTcKQ02pgpIQGCApuz1Em522ChAZIbu7RU61ALcaIsY+Rk/KBgoRGwoqMDgKR1C1AQYGEhwjKzErDki0wAIHCxMdJCwyOT9JPrUDCAwUHiUtM8KFq0UggcEEJlzQ0AFEoAFBBCJKJFBjRxAlUaQMCgQAOw==">
+  
+  
+  <title>Doc</title>
+  <style>
+*:not(hr), *::after, *::before {box-sizing: border-box;margin:0;padding:0;border:0}ul {list-style-type: none}  
+#i{padding: 33px 0;background: linear-gradient(rgba(0,0,0,0.9), blue); 
+		text-align: center;
+		}
+#pod,#svg{position:absolute; top:0;left:0;}
+  </style>  
+</head>
+<body text=pink bgcolor=white>
+<div id=i>
+	<button id="bph" style="position: relative;">
+		<svg width="150" height="150" viewBox="0 0 150 150" fill="yellow">
+		<rect x="0" y="0" width="100%" height="100%" fill="white" />
+		</svg>
+
+		<svg id="pod" width="150" height="150" viewBox="0 0 150 150" fill="yellow">
+		</svg>
+
+		<svg id="svg" width="150" height="150" viewBox="0 0 150 150" fill="yellow">
+		</svg>
+	</button><br>
+	<span id="sn"></span><br>
+	<span id="si"></span><br>
+
+	<label onclick="svg.style.display=(show.checked)?'none':'block'"
+	style="display: inline-block;padding: 1px 12px; color: blue;background: #eee;">
+		<input type="checkbox" id="show" style="display: none;">
+		show
+	</label>
+</div>
+
+<div style="margin:0 auto;
+width:fit-content;color: black;
+text-align:left;
+">
+<ul>
+<li>Курсорные клавиши - перемещение точки
+<li>ЛКМ - добавление/выделение/сглаживание точки
+<li>Show - скрыть/показать разметку
+</ul>
+</div>
+
+
+
+<script>
+let a=[];
+let bz=[];
+let c=-1;
+let s;
+
+const fly=()=>{
+	let cj=true;
+	let s='<path d="M'+a.map((i,j)=>{
+		let d=((!bz[j]&&cj)?'C':'')+(((j>0)&&bz[j]&&cj)?'L':'')+
+		(i.x)+' '+(i.y);
+		cj=bz[j];
+		return d
+		}).join(', ')+' z" stroke="navy" stroke-width="2"/>';
+		
+	sn.innerText=s;
+	pod.innerHTML=s;
+}
+
+const vw=()=>{
+	s=a.map((i,j)=>
+	'<circle r="3" cx="'+(i.x)+
+	'" cy="'+(i.y)+
+	'" fill="'+((bz[j])?'violet':'red')+'"/>'	
+	).join('\n');
+	svg.innerHTML=
+	
+	'<rect x="'+(a[c].x-5)+'" y="'+(a[c].y-5)+'" width="10" height="10" fill="none" stroke="red"/>'
+
+	+s;
+}
+
+const fa=(g)=>{
+	bz[g]=!bz[g];	
+	let n;
+	let err=false;
+	for (let i=0;i<a.length;i++){if (!bz[i]){n++;}else{n=0}; if(n>2){err=true}}
+	bz[0]=true;
+	if(err){bz[g]=!bz[g]; }// откат если слишком много дуг подрядreturn
+}
+
+
+svg.addEventListener('click',(e)=>{//alert(`x=${e.clientX-bph.offsetLeft}`);
+const o={x:e.clientX-bph.offsetLeft,y:e.clientY-bph.offsetTop+window.pageYOffset};
+// попал в заповедную зону
+
+let g=-1;// нарушитель
+for (let i=0;i<a.length;i++)if(((a[i].x-o.x)*(a[i].x-o.x)+(a[i].y-o.y)*(a[i].y-o.y))<160)g=i;
+
+//if (a.length&&a.some(i=>((i.x-o.x)*(i.x-o.x)+(i.y-o.y)*(i.y-o.y))<160)) //return;
+//if (g===0) return;
+if (g>-1)
+	{
+	c=g;	
+	fa(g);
+	si.innerHTML=c;	
+	vw();
+	fly();
+	}
+	else
+	{
+	a.push(o);
+	c=a.length-1;
+	bz.push(true);
+	/*svg.innerHTML+='<circle r="3" cx="'+(o.x)+
+	'" cy="'+(o.y)+
+	'" fill="violet"/>';*/
+
+	
+	vw();
+		
+	fly();
+
+	si.innerHTML=c;
+	}
+//console.log(a);
+});
+ //********************* выбранная точка перемещается курсорными клавишами
+ document.addEventListener('keydown', (e) => {// ←↑↓→
+
+	switch(e.keyCode) {
+		case 40: //↓
+			if(c>-1)
+				{
+				a[c].y++;
+				e.preventDefault();
+				break;
+				}
+		
+		case 38: //↑
+			if(c>-1)
+				{	
+				a[c].y--;
+				e.preventDefault();
+				break;
+				}		  
+		case 39: //→
+			if(c>-1)
+				{	
+				a[c].x++;
+				e.preventDefault();
+				break;
+				}	
+		case 37: //←
+			if(c>-1)
+				{	
+				a[c].x--;
+				e.preventDefault();
+				break;
+				}		
+
+		case 96: if(c>-1){fa(c)}// numpad0		
+		default: break;
+	  }// switch
+	vw();
+	fly();
+	  
+	  }
+
+	);
+//**************************
+</script>   
+</body>
+</html>
