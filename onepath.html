@@ -35,8 +35,8 @@
 		<svg id="svg" width="150" height="150" viewBox="0 0 150 150" fill="yellow">
 		</svg>
 	</button><br>
-	<span id="sn"></span><br>
-	<span id="si"></span><br>
+	<span id="sn"></span><!-- <br> -->
+	<span id="si" style="display:none"></span><!--<br>-->
 
 	<label id="lab" onclick="svg.style.display=(show.checked)?'none':'block'">
 		<input type="checkbox" id="show" style="display: none;">
@@ -61,6 +61,7 @@ let a=[];
 let bz=[];
 let c=-1;
 let s;
+
 
 const fly=()=>{
 	let cj=true;
@@ -91,6 +92,7 @@ const vw=()=>{
 	svg.innerHTML=	
 	'<rect x="'+(a[c].x-5)+'" y="'+(a[c].y-5)+'" width="10" height="10" fill="none" stroke="red"/>'
 	+s;
+	fly();
 }
 
 const fa=(g)=>{
@@ -112,7 +114,6 @@ svg.addEventListener('click',(e)=>{
 		{
 			c=g;	
 			vw();
-			fly();
 		}
 		else
 		{
@@ -120,7 +121,6 @@ svg.addEventListener('click',(e)=>{
 			c=a.length-1;
 			bz.push(true);	
 			vw();
-			fly();
 			si.innerHTML=c;
 		}
 	});
@@ -136,15 +136,14 @@ svg.oncontextmenu=(e)=>{
 			fa(g);
 			si.innerHTML=c;	
 			vw();
-			fly();
 		}
 	return false;// аналог e.preventDefault();	
 	};
  //********************* выбранная точка перемещается курсорными клавишами
  document.addEventListener('keydown', (e) => {// ←↑↓→
-
-	switch(e.keyCode) {
-		case 40: //↓
+	// сканирование клавы по обобщенной схеме
+	switch(e.key) {//
+		case 'ArrowDown': //↓
 			if(c>-1)
 				{
 				a[c].y++;
@@ -152,21 +151,21 @@ svg.oncontextmenu=(e)=>{
 				break;
 				}
 		
-		case 38: //↑
+		case 'ArrowUp': //↑
 			if(c>-1)
 				{	
 				a[c].y--;
 				e.preventDefault();
 				break;
 				}		  
-		case 39: //→
+		case 'ArrowRight': //→
 			if(c>-1)
 				{	
 				a[c].x++;
 				e.preventDefault();
 				break;
 				}	
-		case 37: //←
+		case 'ArrowLeft': //←
 			if(c>-1)
 				{	
 				a[c].x--;
@@ -174,11 +173,10 @@ svg.oncontextmenu=(e)=>{
 				break;
 				}		
 
-		case 96: if(c>-1){fa(c)}// numpad0		
+		case '0': if(c>-1){fa(c)}// numpad0	, 0	
 		default: break;
 	}// switch
-	vw();
-	fly();	  
+	vw();	  
 	});
 //**************************
 </script>   
