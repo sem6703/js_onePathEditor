@@ -35,8 +35,8 @@
 		<svg id="svg" width="150" height="150" viewBox="0 0 150 150" fill="yellow">
 		</svg>
 	</button><br>
-	<span id="sn"></span><!-- <br> -->
-	<span id="si" style="display:none"></span><!--<br>-->
+	<span id="sn"></span><br>
+	<span id="si" style="color: cyan"></span><br>
 
 	<label id="lab" onclick="svg.style.display=(show.checked)?'none':'block'">
 		<input type="checkbox" id="show" style="display: none;">
@@ -58,10 +58,48 @@
 
 <script>
 let a=[];
+let b=[];
 let bz=[];
 let c=-1;
 let s;
 
+ 
+const adi=()=>{// в процентах
+	let xma,xmi,yma,ymi,dx,dy;
+	let kx,ky;
+	if (!a.length) return [];
+	xma=a[0].x; yma=a[0].y;
+	xmi=a[0].x; ymi=a[0].y;
+	a.forEach(i=>{
+		if(xma<i.x)xma=i.x;
+		if(yma<i.y)yma=i.y;
+		if(xmi>i.x)xmi=i.x;
+		if(ymi>i.y)ymi=i.y;
+		dx=xma-xmi;
+		dy=yma-ymi;
+		kx=dx/100;
+		ky=dy/100;	
+		});
+	return a.map(i=>{return {
+		x:Math.trunc((i.x-xmi)/kx),
+		y:Math.trunc((i.y-ymi)/ky),
+		}});
+}
+
+
+const pix=(z)=>{
+if (z)
+return 	a.map((i,j)=>{
+			let d=((!bz[j]&&cj)?'C':'')+(((j>0)&&bz[j]&&cj)?'L':'')+
+			(i.x)+' '+(i.y);
+			cj=bz[j];
+			return d
+			}).join(', ');
+return 	b.map(i=>
+			(i.x)+((i.x)?'% ':' ')+
+			(i.y)+((i.y)?'%':'')
+			).join(', ');			
+}
 
 const fly=()=>{
 	let cj=true;
@@ -69,21 +107,24 @@ const fly=()=>{
 		'<defs>\n'+
 		'	<clipPath id="cross">'+
 		'		<path d="M'+
-		a.map((i,j)=>{
-			let d=((!bz[j]&&cj)?'C':'')+(((j>0)&&bz[j]&&cj)?'L':'')+
-			(i.x)+' '+(i.y);
-			cj=bz[j];
-			return d
-			}).join(', ')+
+		pix(true)+
 		' z" stroke="navy" stroke-width="2"/>'+
 		'	</clipPath>\n'+
 		'</defs>\n'+				
 		'<image x="-20" y="5" width="200" height="200" xlink:href="png.png" clip-path="url(#cross)"/>\n';
 	sn.innerText=s;
-	pod.innerHTML=s;
+	pod.innerHTML=s;	
+	let d='';// отсутвие кривых линий говорит что регион можно натянуть на див
+	if(bz.every(i=>i)) d=
+		'clip-path: polygon('+
+		pix(false)+
+		');';
+	si.innerHTML=d;
 }
 
 const vw=()=>{
+    b=adi();
+	console.log(b);
 	s=a.map((i,j)=>
 	'<circle r="3" cx="'+(i.x)+
 	'" cy="'+(i.y)+
@@ -121,7 +162,7 @@ svg.addEventListener('click',(e)=>{
 			c=a.length-1;
 			bz.push(true);	
 			vw();
-			si.innerHTML=c;
+			//si.innerHTML=c;
 		}
 	});
 //*********************************************************
