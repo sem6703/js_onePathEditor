@@ -57,10 +57,10 @@
 
 
 <script>
-let a=[];
-let b=[];
-let bz=[];
-let c=-1;
+let a=[]; // коорды в пикселях
+let b=[]; // коорды в процентах
+let bz=[]; // сглаженность точки
+let c=-1;  // курсор точек
 let s;
 
  
@@ -87,7 +87,7 @@ const adi=()=>{// в процентах
 }
 
 
-const pix=(z)=>{
+const pix=(z)=>{// строка-тело для path
 if (z)
 return 	a.map((i,j)=>{
 			let d=((!bz[j]&&cj)?'C':'')+(((j>0)&&bz[j]&&cj)?'L':'')+
@@ -101,7 +101,8 @@ return 	b.map(i=>
 			).join(', ');			
 }
 
-const fly=()=>{
+
+const fly=()=>{ // формирование контента
 	let cj=true;
 	let s=	
 		'<defs>\n'+
@@ -122,9 +123,9 @@ const fly=()=>{
 	si.innerHTML=d;
 }
 
-const vw=()=>{
+const vw=()=>{ // рендеринг
     b=adi();
-	console.log(b);
+	//console.log(b);
 	s=a.map((i,j)=>
 	'<circle r="3" cx="'+(i.x)+
 	'" cy="'+(i.y)+
@@ -136,7 +137,7 @@ const vw=()=>{
 	fly();
 }
 
-const fa=(g)=>{
+const fa=(g)=>{ // запрос добавления сглаживания
 	bz[g]=!bz[g];	
 	let n;
 	let err=false;
@@ -162,7 +163,6 @@ svg.addEventListener('click',(e)=>{
 			c=a.length-1;
 			bz.push(true);	
 			vw();
-			//si.innerHTML=c;
 		}
 	});
 //*********************************************************
