@@ -80,10 +80,14 @@ const adi=()=>{// в процентах
 		kx=dx/100;
 		ky=dy/100;	
 		});
-	return a.map(i=>{return {
+	/*return a.map(i=>{return {
 		x:Math.trunc((i.x-xmi)/kx),
 		y:Math.trunc((i.y-ymi)/ky),
-		}});
+		}});*/
+	return a.map(i=>{return {
+		x:Math.min(Math.round((i.x-xmi)/kx),100),
+		y:Math.min(Math.round((i.y-ymi)/ky),100),
+		}});		
 }
 
 
